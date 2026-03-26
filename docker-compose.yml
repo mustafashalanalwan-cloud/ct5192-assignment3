@@ -1,0 +1,28 @@
+services:
+  backend-flask:
+    build: ./backend-flask
+    ports:
+      - "4000:4000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
+      
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend-react
+      args:
+        REACT_APP_API_URL: http://localhost:4000
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-flask
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
